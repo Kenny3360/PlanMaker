@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>计划书制作器</title>
+<!-- PWA：支持添加到手机桌面，像 App 一样全屏打开 -->
+<link rel="manifest" href="manifest.json?sharecode=KJ36WWMYQP">
+<meta name="theme-color" content="#7B1113">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="计划书">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- 登录层 -->
+<div id="loginLayer" class="login-layer">
+  <div class="login-card">
+    <div class="login-badge">内部工具 · 授权使用</div>
+    <h1 class="login-title">计划书制作器</h1>
+    <p class="login-sub">输入访问口令后使用</p>
+    <input type="password" id="codeInput" placeholder="请输入访问口令" autocomplete="off">
+    <div class="login-err" id="loginErr"></div>
+    <button class="btn btn-gold btn-big" id="loginBtn">进入</button>
+    <p class="login-tip">口令由管理员分发，请勿外传</p>
+    <p class="login-tip">手机浏览器打开后，点「分享 / 菜单 → 添加到主屏幕」，即可像 App 一样一键进入</p>
+  </div>
+</div>
+
+<!-- 应用主体 -->
+<div id="app" class="app hidden">
+  <div class="brandbar">
+    <div class="brand-left">
+      <div class="brand-logo">泰</div>
+      <div class="brand-name" id="topbarTitle">计划书制作器</div>
+    </div>
+    <div class="brand-right">
+      <button class="brand-back hidden" id="backBtn">‹ 产品</button>
+      <button class="brand-logout" id="logoutBtn">退出</button>
+    </div>
+  </div>
+
+  <!-- 顶部 Banner -->
+    <div class="hero" id="heroBanner">
+    <div class="hero-banner" style="background-image:url('assets/gold-tree.jpg')"></div>
+    <div class="hero-shade"></div>
+    <div class="hero-text">
+      <h1>计划书制作器</h1>
+      <p>为每一份期待，做好规划</p>
+    </div>
+  </div>
+
+  <!-- 产品选择首页 -->
+  <div id="home" class="home">
+    <div class="card">
+      <div class="sec-title"><span class="sec-no">01</span><span>选择产品</span></div>
+      <div class="sec-sub">泰康在售主力产品 · 计划书一键生成</div>
+      <div class="prod-grid" id="prodGrid"></div>
+      <div class="home-tip">选择产品开始制作 · 数据仅供参考，以保险合同为准</div>
+    </div>
+  </div>
+
+  <!-- 计算器页 -->
+  <div id="calcPage" class="hidden">
+    <div class="card" id="formCard">
+      <div class="form-card-head">
+        <div class="sec-title"><span class="sec-no">01</span><span>填写方案</span></div>
+        <button class="form-toggle hidden" id="formToggle">修改参数 ›</button>
+      </div>
+      <div class="form-card-body" id="formCardBody">
+      <div class="sec-sub" id="calcKind">—</div>
+      <div class="plan-name" id="calcTitle">—</div>
+      <div class="form-grid" id="formGrid"></div>
+      <button class="btn btn-generate" id="calcBtn"><span>生成计划书</span><span class="gen-arrow">→</span></button>
+      <div class="rule-fold">
+        <details>
+          <summary>计划书展示规则</summary>
+          <div class="rule-body">最多展示35个保单年度。优先保留缴费结束、首次返还、现金价值和预期生存总利益首次超过总保费、第10／20／30年及最后一年；其余后期年度按5年间隔展示。第10／20／30年加金色底纹；年金、年度红利及重点数字标红加粗。</div>
+        </details>
+      </div>
+      </div><!-- /form-card-body -->
+      <div class="form-collapsed-summary hidden" id="formSummary"></div>
+    </div>
+
+    <div id="resultPanel" class="hidden">
+      <div class="irr-row">
+        <div class="irr-card">
+          <div class="irr-label" id="irrGLabel">保证 IRR</div>
+          <div class="irr-value" id="irrG">--</div>
+        </div>
+        <div class="irr-card">
+          <div class="irr-label" id="irrCLabel">预期 IRR</div>
+          <div class="irr-value" id="irrC">--</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="sec-title"><span class="sec-no">02</span><span>计划书预览</span></div>
+        <div class="sec-sub">生成后即可下载高清图片</div>
+        <div class="plan-wrap"><div class="plan-table" id="planTable"></div></div>
+      </div>
+
+      <div class="card export-card">
+        <div class="sec-title"><span class="sec-no">03</span><span>导出与增值资料</span></div>
+        <div class="export-bar">
+          <button class="btn btn-generate" id="exportBtn">生成计划书图片</button>
+          <button class="btn btn-outline" id="exportExcelBtn">生成 Excel 表格</button>
+          <button class="btn btn-outline" id="vipImgBtn">生成高客服务图片</button>
+          <button class="btn btn-outline" id="cityImgBtn">生成城市版对接明细</button>
+          <button class="btn btn-outline" id="greenImgBtn">生成重疾绿通服务图片</button>
+          <button class="btn btn-outline hidden" id="rateTableBtn">安盈尊享利率表</button>
+          <div class="export-tip">生成图片或 Excel 后可保存/下载，转发给客户</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot-note">分红及万能账户利益为演示值。红利分配不确定，可能为零；万能账户最低保证利率之上的收益不确定，实际以保险公司公布为准。具体保险责任以产品条款为准。</div>
+</div>
+
+<!-- 图片预览弹层 -->
+<div id="imgModal" class="img-modal hidden">
+  <div class="img-modal-inner">
+    <div class="img-modal-head">
+      <span id="imgModalTitle">计划书图片（长按保存 / 点击下载）</span>
+      <button id="imgClose" class="img-close">✕</button>
+    </div>
+    <div class="img-box" id="imgBox"></div>
+    <div id="imgDownloadBar" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:12px;"></div>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+<div id="loading" class="loading hidden">数据加载中…</div>
+
+<script src="config.js"></script>
+<script src="engine_changle.js"></script>
+<script src="engine_annuity.js"></script>
+<script src="engine_endow.js"></script>
+<script src="engine_aying.js"></script>
+<script src="products.js"></script>
+<script src="datajs/xfyb_once.js"></script>
+<script src="datajs/xfyb_ba.js"></script>
+<script src="datajs/xfy_once.js"></script>
+<script src="datajs/xfy_ba.js"></script>
+<script src="excel_export.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
